@@ -119,15 +119,20 @@ sudo systemctl restart wazuh-manager
 ## Test the Full Pipeline
 
 ```bash
-# On the agent:
-curl http://testmynids.org/uid/index.html
-
-# Watch for auto-block:
+# On the agent — Terminal 1 (monitor):
 sudo tail -f /var/ossec/logs/active-responses.log
-# Expected: suricata-drop: Blocking IP 13.35.20.xx
 
-# Verify iptables:
-sudo iptables -L INPUT | grep DROP
+# Terminal 2 — send test request:
+curl http://testmynids.org/uid/index.html
+# First curl — expected:
+# suricata-drop: Blocking IP 13.35.20.97
+
+# Second curl — expected (duplicate skipped):
+curl http://testmynids.org/uid/index.html
+# suricata-drop: 13.35.20.97 already blocked, skipping
+
+# Verify iptables — each IP appears only once:
+sudo iptables -L INPUT -n | grep 13.35.20
 ```
 
 ---
