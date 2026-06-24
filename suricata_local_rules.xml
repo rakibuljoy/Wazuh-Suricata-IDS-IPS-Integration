@@ -1,0 +1,23 @@
+<!--
+  Suricata Custom Override Rule
+  Add this inside your existing <group> block in:
+  /var/ossec/etc/rules/local_rules.xml (on Wazuh Manager)
+
+  Why this is needed:
+  - Built-in rule 86601 (in 0475-suricata_rules.xml) is set to level 3
+  - Level 3 is below most alert thresholds, so alerts won't show in dashboard
+  - Rule 86701 inherits from 86601 and raises the level to 7
+  - DO NOT edit the built-in rule file directly — it gets overwritten on updates
+
+  Author: Rakibul Islam Joy | Security Engineer | Unified IT
+-->
+
+<group name="ids,suricata,">
+
+  <rule id="86701" level="7">
+    <if_sid>86601</if_sid>
+    <description>Suricata: Alert - $(alert.signature)</description>
+    <group>network,ids,suricata,</group>
+  </rule>
+
+</group>

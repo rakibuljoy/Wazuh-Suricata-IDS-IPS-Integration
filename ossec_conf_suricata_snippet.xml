@@ -1,0 +1,25 @@
+<!--
+  Suricata Active Response Config Snippet
+  Add both blocks to: /var/ossec/etc/ossec.conf (on Wazuh Manager)
+  Place before </ossec_config>
+
+  CRITICAL: The <command> block MUST come before <active-response>.
+  Wrong order will cause errors and Wazuh won't start.
+
+  Author: Rakibul Islam Joy | Security Engineer | Unified IT
+-->
+
+<!-- 1. Command definition — always first -->
+<command>
+  <name>suricata-drop</name>
+  <executable>suricata-drop.sh</executable>
+  <timeout_allowed>yes</timeout_allowed>
+</command>
+
+<!-- 2. Active response — triggers when Suricata rule 86701 fires -->
+<active-response>
+  <command>suricata-drop</command>
+  <location>local</location>   <!-- runs on the agent where alert originated -->
+  <rules_id>86701</rules_id>
+  <timeout>600</timeout>        <!-- auto-unblock after 10 minutes -->
+</active-response>
